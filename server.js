@@ -4,7 +4,7 @@ var logger = require("morgan");
 var mongoose = require("mongoose");
 var request = require("request")
 
-// var axios = require("axios");
+var axios = require("axios");
 var cheerio = require("cheerio");
 var db = require("./models");
 
@@ -25,9 +25,33 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //   console.log("Database Error:", error);
 // });
 
-mongoose.Promise = Promise;
-mongoose.connect("mongodb://localhost/mongo-scrape", {
-  useMongoClient:  true
+// mongoose.Promise = Promise;
+// mongoose.connect("mongodb://localhost/mongo-scrape", {
+//   useMongoClient:  true
+// });
+
+// --------Define local MongoDB  URI
+var databaseUri = "mongodb://localhost/mongo-scrape";
+//---------------------------------------------
+if (process.env.MONGODB_URI) {
+//THIS EXECUTES IF THIS IS BEING EXECUTED IN YOUR HEROKU APP
+mongoose.connect(process.env.MONGODB_URI);
+
+} else {
+//THIS EXECUTES IF THIS IS BEING EXECUTED ON YOUR LOCAL MACHINE
+mongoose.connect(databaseUri);
+
+// --------------End database configuration----------------
+
+var db = mongoose.connection;
+
+//show any mongoose errors
+db.on("error", function(err) {
+  console.log("Mongoose Error: ", err);
+});
+//once logged in to the db through mongoose, log a success message
+db.once("open", function() {
+  console.log("Mongoose connection successful.");
 });
 
 app.get("/scrape", function(req, res){
@@ -37,7 +61,7 @@ app.get("/scrape", function(req, res){
 url = "https://www.nytimes.com/"
 
 request(url, function(error, response, html){
-.then(function(response) {
+// .then(function(response) {
 
     if(!error){
   
@@ -54,7 +78,7 @@ request(url, function(error, response, html){
         results.summary = $(this).children("p").text();
 
      db.Article
-        .create(result)
+        .create({results})
         .then(function(dbArticle) {
           // If we were able to successfully scrape and save an Article, send a message to the client
           res.send("Scrape Complete");
@@ -65,12 +89,8 @@ request(url, function(error, response, html){
         });
 
     });
-
   };
-
-
 });
-
 
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
@@ -83,7 +103,7 @@ app.get("/articles", function(req, res) {
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
-      res.json(err);
+      res.json(err);  
     });
 });
 
@@ -129,7 +149,8 @@ app.post("/articles/:id", function(req, res) {
 app.listen(process.env.PORT || 8080, function() {
   
   console.log("App running on port 8080!");
-
 });
 
-exports = module.exports = app;
+
+// exports = module.exports = app;
+     
