@@ -1,0 +1,33 @@
+{
+  "name": "mongo-scrape",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dawnsuggs/Mongo-Scrape.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dawnsuggs/Mongo-Scrape/issues"
+  },
+  "homepage": "https://github.com/dawnsuggs/Mongo-Scrape#readme",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "body-parser": "^1.18.2",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "logger": "0.0.1",
+    "mongodb": "^3.0.1",
+    "mongoose": "^5.0.0-rc0",
+    "morgan": "^1.9.0",
+    "promise": "^8.0.1",
+    "request": "^2.83.0"
+  }
+}
